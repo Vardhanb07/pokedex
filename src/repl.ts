@@ -1,5 +1,5 @@
-import { createInterface } from "node:readline";
-import { getCommands } from "./commands.js";
+import { type Interface } from "node:readline";
+import { State } from "./state.js";
 
 export function cleanInput(input: string): string[] {
   return input
@@ -8,20 +8,18 @@ export function cleanInput(input: string): string[] {
     .filter((item) => item !== "");
 }
 
-export function startREPL(): void {
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    prompt: "Pokedex > ",
-  });
+export function startREPL(state: State): void {
+  const commands = state.registry;
+  const rl = state.rl;
   rl.prompt();
   rl.on("line", (line) => {
     const input = cleanInput(line);
-    const commands = getCommands();
     if (input.length == 1 && commands[input[0]]) {
       const command = commands[input[0]];
-      command.callback();
+      command.callback(state);
     }
     rl.prompt();
+  }).on("close", () => {
+    commands["exit"].callback(state);
   });
 }
