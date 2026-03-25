@@ -1,5 +1,5 @@
-import { type Interface } from "node:readline";
 import { State } from "./state.js";
+import { NetworkError } from "./errors.js";
 
 export function cleanInput(input: string): string[] {
   return input
@@ -8,18 +8,25 @@ export function cleanInput(input: string): string[] {
     .filter((item) => item !== "");
 }
 
-export function startREPL(state: State): void {
+export async function startREPL(state: State): Promise<void> {
   const commands = state.registry;
   const rl = state.rl;
   rl.prompt();
-  rl.on("line", (line) => {
+  rl.on("line", async (line) => {
     const input = cleanInput(line);
     if (input.length == 1 && commands[input[0]]) {
       const command = commands[input[0]];
-      command.callback(state);
+      try {
+        await command.callback(state);
+      } catch (e) {
+        if (e instanceof NetworkError) {
+          console.error(e.message);
+          await commands["exit"].callback(state);
+        }
+      }
     }
     rl.prompt();
-  }).on("close", () => {
-    commands["exit"].callback(state);
+  }).on("close", async () => {
+    await commands["exit"].callback(state);
   });
 }

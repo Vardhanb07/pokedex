@@ -1,9 +1,9 @@
-import { getCommands } from "./commands.js";
+import type { State } from "./state.js";
 
-export function commandHelp(): void {
+export async function commandHelp(state: State): Promise<void> {
   console.log("Welcome to the Pokedex!");
   console.log("Usage:\n\n");
-  const commands = getCommands();
+  const commands = state.registry;
   for (const key in commands) {
     if (!Object.hasOwn(commands, key)) continue;
 
