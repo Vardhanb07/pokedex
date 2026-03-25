@@ -1,0 +1,31 @@
+{
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.1"
+  },
+  "name": "pokedex",
+  "version": "1.0.0",
+  "dependencies": {
+    "undici-types": "^7.18.2"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc && node dist/main.js",
+    "start": "node dist/main.js",
+    "test": "vitest --run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vardhanb07/pokedex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vardhanb07/pokedex/issues"
+  },
+  "homepage": "https://github.com/Vardhanb07/pokedex#readme",
+  "description": ""
+}
