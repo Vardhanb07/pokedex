@@ -14,12 +14,15 @@ export async function commandCatch(
   const pokeapi = new state.PokeAPI();
   const response = await pokeapi.fetchPokemon(args[1]);
   console.log(`Throwing a Pokeball at ${args[1]}...`);
-  const randomArray = new Uint16Array(1);
-  const maxUint16ArrayValue = Math.pow(2, 16) - 1;
+  const randomArray = new Uint8Array(1);
   getRandomValues(randomArray);
-  const d = (2 + response.base_experience) % maxUint16ArrayValue;
-  if (randomArray[1] % d == 0) {
+  console.log(randomArray[0] * response.base_experience);
+  if (
+    randomArray[0] * response.base_experience >
+    4000 + response.base_experience * 100
+  ) {
     console.log(`${args[1]} was caught!`);
+    state.pokedex[args[1]] = response;
   } else {
     console.log(`${args[1]} escaped!`);
   }
