@@ -7,7 +7,8 @@ export async function commandExplore(
 ): Promise<void> {
   const commands = state.registry;
   if (!args[1]) {
-    commands["exit"].callback(state);
+    const input = ["help", "explore"];
+    commands["help"].callback(state, ...input);
     return;
   }
   const locationName = args[1];

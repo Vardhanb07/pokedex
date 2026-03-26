@@ -1,4 +1,8 @@
-import { NetworkError, LocationAreaNotFoundError } from "./errors.js";
+import {
+  NetworkError,
+  LocationAreaNotFoundError,
+  PokemonNotFoundError,
+} from "./errors.js";
 import { Cache } from "./pokecache.js";
 
 export type ShallowLocations = {
@@ -13,6 +17,10 @@ export type Location = {
       name: string;
     };
   }[];
+};
+
+export type Pokemon = {
+  base_experience: number;
 };
 
 export class PokeAPI {
@@ -55,9 +63,37 @@ export class PokeAPI {
         return res.json();
       });
     } catch (e) {
+      if (e instanceof LocationAreaNotFoundError) {
+        throw e;
+      }
       throw new NetworkError("poke api request failed");
     }
     this.#cache.add<Location>(url, response);
+    return response;
+  }
+  async fetchPokemon(pokemonName: string): Promise<Pokemon> {
+    const url = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
+    const cacheEntry = this.#cache.get<Pokemon>(url);
+    if (cacheEntry) {
+      return cacheEntry.val;
+    }
+    let response: Pokemon;
+    try {
+      response = await fetch(url, {
+        method: "GET",
+      }).then((res) => {
+        if (res.status == 404) {
+          throw new PokemonNotFoundError("poke not found");
+        }
+        return res.json();
+      });
+    } catch (e) {
+      if (e instanceof PokemonNotFoundError) {
+        throw e;
+      }
+      throw new NetworkError("poke api request failed");
+    }
+    this.#cache.add<Pokemon>(url, response);
     return response;
   }
 }

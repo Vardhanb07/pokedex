@@ -1,5 +1,4 @@
 import { State } from "./state.js";
-import { LocationAreaNotFoundError, NetworkError } from "./errors.js";
 
 export function cleanInput(input: string): string[] {
   return input
@@ -19,15 +18,8 @@ export async function startREPL(state: State): Promise<void> {
       try {
         await command.callback(state, ...input);
       } catch (e) {
-        if (e instanceof NetworkError) {
+        if (e instanceof Error) {
           console.error(e.message);
-          await commands["exit"].callback(state);
-        } else if (e instanceof LocationAreaNotFoundError) {
-          console.error(e.message);
-          await commands["exit"].callback(state);
-        } else if (e instanceof Error) {
-          console.error(e.message);
-          await commands["exit"].callback(state);
         }
       }
     } else {

@@ -10,3 +10,8 @@ export class LocationAreaNotFoundError extends Error {
   }
 }
 
+export class PokemonNotFoundError extends Error {
+  constructor(msg: string) {
+    super(`PokemonNotFound: ${msg}`);
+  }
+}
