@@ -3,3 +3,10 @@ export class NetworkError extends Error {
     super(`NetworkError: ${msg}`);
   }
 }
+
+export class LocationAreaNotFoundError extends Error {
+  constructor(msg: string) {
+    super(`LocationAreaNotFound: ${msg}`);
+  }
+}
+

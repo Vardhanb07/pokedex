@@ -1,5 +1,5 @@
 import { State } from "./state.js";
-import { NetworkError } from "./errors.js";
+import { LocationAreaNotFoundError, NetworkError } from "./errors.js";
 
 export function cleanInput(input: string): string[] {
   return input
@@ -14,16 +14,24 @@ export async function startREPL(state: State): Promise<void> {
   rl.prompt();
   rl.on("line", async (line) => {
     const input = cleanInput(line);
-    if (input.length == 1 && commands[input[0]]) {
+    if (commands[input[0]]) {
       const command = commands[input[0]];
       try {
-        await command.callback(state);
+        await command.callback(state, ...input);
       } catch (e) {
         if (e instanceof NetworkError) {
           console.error(e.message);
           await commands["exit"].callback(state);
+        } else if (e instanceof LocationAreaNotFoundError) {
+          console.error(e.message);
+          await commands["exit"].callback(state);
+        } else if (e instanceof Error) {
+          console.error(e.message);
+          await commands["exit"].callback(state);
         }
       }
+    } else {
+      commands["help"].callback(state);
     }
     rl.prompt();
   }).on("close", async () => {
