@@ -16,7 +16,6 @@ export async function commandCatch(
   console.log(`Throwing a Pokeball at ${args[1]}...`);
   const randomArray = new Uint8Array(1);
   getRandomValues(randomArray);
-  console.log(randomArray[0] * response.base_experience);
   if (
     randomArray[0] * response.base_experience >
     4000 + response.base_experience * 100
